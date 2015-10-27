@@ -1,0 +1,71 @@
+apply plugin: 'java'
+// eclipse for web
+apply plugin: 'eclipse-wtp'
+//apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'hmjtest'
+    version = '0.0.1'
+
+    // 依存jar内のクラスも含めて一つのjarに入れるための設定
+    //from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+// 拡張プロパティ
+ext {
+  // loggers
+  slf4jVersion = "1.7.9"
+  logbackVersion = "1.1.2"
+
+  // spring boot plugin
+  springBootVersion = "1.2.1.RELEASE"
+
+  // tomcat
+  tomcatVersion = "8.0.15"
+
+  //Tthymeleaf
+  thymeleafVersion = "2.1.4.RELEASE"
+}
+
+ext.defaultEncoding = 'UTF-8'
+ext.artifactId = 'SpringBoot'
+version = '1.0'
+
+// Java Use Version
+sourceCompatibility = targetCompatibility = 1.8
+tasks.withType(AbstractCompile) each {
+  it.options.encoding = ext.defaultEncoding
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  // loggers
+  compile "org.slf4j:slf4j-api:$slf4jVersion"
+  compile "org.slf4j:jul-to-slf4j:$slf4jVersion"
+  compile "ch.qos.logback:logback-classic:$logbackVersion"
+
+  // spring-boot
+  compile "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+  compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+  compile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+  compile "org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion"
+  compile "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
+  compile "org.springframework.boot:spring-boot-starter-jdbc:$springBootVersion"
+
+  // tomcat-for read JSP
+  compile "org.apache.tomcat.embed:tomcat-embed-jasper:$tomcatVersion"
+
+  // Thymeleaf
+  compile "org.thymeleaf:thymeleaf-spring4:$thymeleafVersion"
+
+  // postgresql
+  compile "org.postgresql:postgresql:9.4-1201-jdbc41"
+
+  // MyBatis
+  compile "org.mybatis:mybatis:3.2.8"
+  compile "org.mybatis:mybatis-spring:1.2.2"
+
+}
