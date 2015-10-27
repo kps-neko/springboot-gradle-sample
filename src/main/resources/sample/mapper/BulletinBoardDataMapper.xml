@@ -182,25 +182,6 @@
     </trim>
   </insert>
 
-  <insert id="insertBulletinBoardDataAutoNumbering" parameterType="bulletin_board_data">
-    <selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">
-      SELECT NEXTVAL('base.user_id_seq')
-    </selectKey>
-    INSERT INTO bulletin_board_data (
-      id,
-      name,
-      posting_date,
-      posting_content,
-      register_date
-    ) values (
-      #{id, jdbcType=INTEGER},
-      #{name},
-      #{postingDate},
-      #{postingContent},
-      #{registerDate}
-    );
-  </insert>
-
   <select id="countByExample" parameterType="sample.model.BulletinBoardDataExample" resultType="java.lang.Integer">
     <!--
       WARNING - @mbggenerated
@@ -212,6 +193,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     <!--
       WARNING - @mbggenerated
@@ -260,4 +242,23 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+
+  <!-- 追加で作成した処理 -->
+  <select id="selectByIdMax" resultType="java.lang.Integer">
+    select max(id) from bulletin_board_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+      <include refid="Base_Column_List" />
+    from
+      bulletin_board_data
+    where
+      name = #{name}
+  </select>
+
+
 </mapper>

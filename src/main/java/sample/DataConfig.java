@@ -1,22 +1,24 @@
 package sample;
 
 
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 @Configuration
 @EnableTransactionManagement
 @MapperScan("sample.mapper")
 public class DataConfig {
+
    @Bean
    public SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource) throws Exception{
        SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
@@ -24,10 +26,20 @@ public class DataConfig {
        factory.setConfigLocation(new ClassPathResource("/mybatis-config.xml"));
        return factory;
    }
-   
+
    @Bean
-   @Autowired
-   protected PlatformTransactionManager createTransactionManager(DataSource dataSource) {
-       return new DataSourceTransactionManager(dataSource);
+   public TransactionInterceptor txAdvice(DataSource dataSource) {
+       DataSourceTransactionManager txManager = new DataSourceTransactionManager(dataSource);
+       Properties attributes = new Properties();
+       attributes.setProperty("*", "PROPAGATION_REQUIRED");
+       TransactionInterceptor txAdvice = new TransactionInterceptor(txManager, attributes);
+       return txAdvice;
    }
+
+//   @Bean
+//   @Autowired
+//   protected PlatformTransactionManager createTransactionManager(DataSource dataSource) {
+//       return new DataSourceTransactionManager(dataSource);
+//   }
+
 }

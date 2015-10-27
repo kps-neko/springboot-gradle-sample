@@ -30,7 +30,7 @@
      <property name="trimStrings" value="true" />
    </javaModelGenerator>
 
-   <!-- SQL Mapperファイルの生成先を指定
+   <!-- SQL Mapper(Dao)ファイルの生成先を指定
        targetPackage : 生成先パッケージ
        targetProject : プロジェクトディレクトリから生成先パッケージの親ディレクトリまでのパス
    -->
@@ -46,8 +46,7 @@
      <property name="enableSubPackages" value="true" />
    </javaClientGenerator>
 
-   <!--
-             自動生成対象のテーブル名を[tableName]に指定する。
+   <!--  自動生成対象のテーブル名を[tableName]に指定する。 -->
 <!--
     <table schema="my" tableName="%"
             enableInsert="true"
