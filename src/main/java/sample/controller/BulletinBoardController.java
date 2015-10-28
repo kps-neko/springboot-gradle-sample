@@ -104,6 +104,7 @@ public class BulletinBoardController {
             bulletinBoardDataService.addBulletinBoardData(entity);
         } catch(Exception e) {
             log.info(e.getMessage());
+            e.printStackTrace();
         }
 
         getDataAll(model);

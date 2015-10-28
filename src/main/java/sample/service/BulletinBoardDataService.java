@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import sample.mapper.BulletinBoardDataExMapper;
 import sample.mapper.BulletinBoardDataMapper;
 import sample.model.BulletinBoardData;
 import sample.model.BulletinBoardDataExample;
@@ -16,6 +16,9 @@ public class BulletinBoardDataService {
 
     @Autowired
     private BulletinBoardDataMapper bulletinBoardDataMapper;
+
+    @Autowired
+    private BulletinBoardDataExMapper bulletinBoardDataExMapper;
 
     /**
      * 全件取得して返却する
@@ -46,7 +49,9 @@ public class BulletinBoardDataService {
      */
     @Transactional(rollbackFor = Exception.class)
     public int addBulletinBoardData(BulletinBoardData record) {
-        Integer maxId = bulletinBoardDataMapper.selectByIdMax();
+//        Integer maxId = bulletinBoardDataMapper.selectByIdMax();
+        Integer maxId = bulletinBoardDataExMapper.selectByIdMax2();
+
         int id = 1;
         if (maxId != null) {
             id = maxId.intValue() + 1;
