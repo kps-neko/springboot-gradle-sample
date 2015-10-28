@@ -61,23 +61,4 @@ public interface BulletinBoardDataMapper {
      * @mbggenerated Mon Oct 26 17:23:44 JST 2015
      */
     int updateByExample(@Param("record") BulletinBoardData record, @Param("example") BulletinBoardDataExample example);
-
-    // *****************************
-    // 追加で作成した処理
-    // *****************************
-    /**
-     * idのMax値を取得して返却する
-     *
-     * @param example
-     * @return idのMax値
-     */
-    Integer selectByIdMax();
-
-    /**
-     * 指定した名前に該当するデータを検索する
-     *
-     * @param name 名前
-     * @return 該当データ(リスト)
-     */
-    List<BulletinBoardData> selectByName(String name);
 }

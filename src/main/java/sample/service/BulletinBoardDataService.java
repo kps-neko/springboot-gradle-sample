@@ -39,7 +39,7 @@ public class BulletinBoardDataService {
      * @return　List<BulletinBoardData>　検索結果
      */
     public List<BulletinBoardData> getSearchNameBulletinBoardData(String name) {
-        return bulletinBoardDataMapper.selectByName(name);
+        return bulletinBoardDataExMapper.selectByName(name);
     }
 
     /**
@@ -49,8 +49,7 @@ public class BulletinBoardDataService {
      */
     @Transactional(rollbackFor = Exception.class)
     public int addBulletinBoardData(BulletinBoardData record) {
-//        Integer maxId = bulletinBoardDataMapper.selectByIdMax();
-        Integer maxId = bulletinBoardDataExMapper.selectByIdMax2();
+        Integer maxId = bulletinBoardDataExMapper.selectByIdMax();
 
         int id = 1;
         if (maxId != null) {

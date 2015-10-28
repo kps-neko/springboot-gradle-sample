@@ -1,14 +1,27 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.7.RELEASE")
+    }
+}
+
 apply plugin: 'java'
-// eclipse for web
-apply plugin: 'eclipse-wtp'
-//apply plugin: 'spring-boot'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'hmjtest'
-    version = '0.0.1'
+    baseName = 'springboot-gradle-sample'
+    version =  '0.1.0'
 
     // 依存jar内のクラスも含めて一つのjarに入れるための設定
     //from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+repositories {
+    mavenCentral()
 }
 
 // 拡張プロパティ
@@ -23,22 +36,26 @@ ext {
   // tomcat
   tomcatVersion = "8.0.15"
 
-  //Tthymeleaf
+  // Tthymeleaf
   thymeleafVersion = "2.1.4.RELEASE"
-}
 
-ext.defaultEncoding = 'UTF-8'
-ext.artifactId = 'SpringBoot'
-version = '1.0'
+  // postgresql
+  postgresqlVersion = "9.4-1201-jdbc41"
+
+  // MyBatis
+  myBatisVersion = "3.2.8"
+  mybatisSpringVersion = "1.2.2"
+
+  // springSecurity
+  springSecurityVersion = "3.2.6.RELEASE"
+}
 
 // Java Use Version
-sourceCompatibility = targetCompatibility = 1.8
-tasks.withType(AbstractCompile) each {
-  it.options.encoding = ext.defaultEncoding
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-repositories {
-  mavenCentral()
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
 }
 
 dependencies {
@@ -62,10 +79,15 @@ dependencies {
   compile "org.thymeleaf:thymeleaf-spring4:$thymeleafVersion"
 
   // postgresql
-  compile "org.postgresql:postgresql:9.4-1201-jdbc41"
+  compile "org.postgresql:postgresql:$postgresqlVersion"
 
   // MyBatis
-  compile "org.mybatis:mybatis:3.2.8"
-  compile "org.mybatis:mybatis-spring:1.2.2"
+  compile "org.mybatis:mybatis:$myBatisVersion"
+  compile "org.mybatis:mybatis-spring:$mybatisSpringVersion"
 
+  // spring-security
+  compile "org.springframework.security:spring-security-web:$springSecurityVersion"
+  compile "org.springframework.security:spring-security-config:$springSecurityVersion"
+
+  testCompile "junit:junit"
 }

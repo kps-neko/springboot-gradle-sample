@@ -25,11 +25,11 @@
   </sql>
 
   <!-- 追加で作成した処理 -->
-  <select id="selectByIdMax2" resultType="java.lang.Integer">
+  <select id="selectByIdMax" resultType="java.lang.Integer">
     select max(id) from bulletin_board_data
   </select>
 
-  <select id="selectByName2" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
       <include refid="Base_Column_List" />
     from

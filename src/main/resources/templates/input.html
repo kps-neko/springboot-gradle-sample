@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>入力画面</title>
+    </head>
+    <body>
+        <form method="post" th:action="@{/sample/result}">
+                             名前：<input type="text" name="name"/>
+            <input type="submit" value="ok"/>
+        </form>
+    </body>
+</html>

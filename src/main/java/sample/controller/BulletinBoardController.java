@@ -24,12 +24,10 @@ import sample.service.BulletinBoardDataService;
 
 @Controller
 @EnableAutoConfiguration
+@RequestMapping("/bulletinBoard")
 public class BulletinBoardController {
 
     private static final Logger log = LoggerFactory.getLogger(BulletinBoardController.class);
-
-//    @Autowired //リポジトリを紐づけする
-//    BulletinBoardDataRepository repository;
 
     @Autowired
     BulletinBoardDataService bulletinBoardDataService;
@@ -48,7 +46,7 @@ public class BulletinBoardController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/bulletinBoard/serch/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/serch/list", method = RequestMethod.GET)
     public String serchList(Locale locale, Model model) {
         getDataAll(model);
         return "bulletinBoard";
@@ -63,7 +61,7 @@ public class BulletinBoardController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/bulletinBoard/serch", method = RequestMethod.POST)
+    @RequestMapping(value = "/serch", method = RequestMethod.POST)
     public String serchKeyword(BulletinBoardForm bulletinBoardForm, Locale locale, Model model) {
 
         List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName());
@@ -83,7 +81,7 @@ public class BulletinBoardController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/bulletinBoard", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String registReport(@Valid BulletinBoardForm bulletinBoardForm, BindingResult result, Model model) {
 
         // バリデータ
