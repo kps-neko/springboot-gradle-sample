@@ -6,7 +6,7 @@ input {
  font: normal 10pt normal "メイリオ",Meiryo;
 }
 table {
- border: 1px solid gray;
+ border: 2px solid gray;
 }
 th {
  background-color: silver;

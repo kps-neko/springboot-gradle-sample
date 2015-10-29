@@ -25,7 +25,7 @@
        targetPackage : 生成先パッケージ
        targetProject : プロジェクトディレクトリから生成先パッケージの親ディレクトリまでのパス
    -->
-   <javaModelGenerator targetPackage="sample.model" targetProject="C:\Users\a-numadate\Documents\workspace-sts-3.7.1.RELEASE\hmjtest\src\main\java">
+   <javaModelGenerator targetPackage="sample.model" targetProject="C:\Users\a-numadate\Documents\workspace-sts-3.7.1.RELEASE\springboot-gradle-sample\src\main\java">
      <property name="enableSubPackages" value="true" />
      <property name="trimStrings" value="true" />
    </javaModelGenerator>
@@ -34,7 +34,7 @@
        targetPackage : 生成先パッケージ
        targetProject : プロジェクトディレクトリから生成先パッケージの親ディレクトリまでのパス
    -->
-   <sqlMapGenerator targetPackage="sample.mapper"  targetProject="C:\Users\a-numadate\Documents\workspace-sts-3.7.1.RELEASE\hmjtest\src\main\resources">
+   <sqlMapGenerator targetPackage="sample.mapper"  targetProject="C:\Users\a-numadate\Documents\workspace-sts-3.7.1.RELEASE\springboot-gradle-sample\src\main\resources">
      <property name="enableSubPackages" value="true" />
    </sqlMapGenerator>
 
@@ -42,7 +42,7 @@
        targetPackage : 生成先パッケージ
        targetProject : プロジェクトディレクトリから生成先パッケージの親ディレクトリまでのパス
    -->
-   <javaClientGenerator type="XMLMAPPER" targetPackage="sample.mapper"  targetProject="C:\Users\a-numadate\Documents\workspace-sts-3.7.1.RELEASE\hmjtest\src\main\java">
+   <javaClientGenerator type="XMLMAPPER" targetPackage="sample.mapper"  targetProject="C:\Users\a-numadate\Documents\workspace-sts-3.7.1.RELEASE\springboot-gradle-sample\src\main\java">
      <property name="enableSubPackages" value="true" />
    </javaClientGenerator>
 
@@ -63,6 +63,8 @@
 -->
     <!-- 練習のため全テーブル指定は行わず作成対象のテーブルを追加していく -->
     <table tableName="bulletin_board_data"/>
+    <table tableName="user_info"/>
+    <table tableName="user_roles"/>
 
  </context>
 </generatorConfiguration>

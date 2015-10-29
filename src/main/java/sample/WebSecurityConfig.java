@@ -1,49 +1,100 @@
 package sample;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import sample.security.MyUserDetailsService;
 
 @Configuration
 @EnableWebMvcSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeRequests()
-//                .antMatchers("/", "/home").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//            .formLogin()
-//                .loginPage("/login")
-//                .permitAll()
-//                .and()
-//            .logout()
-//                .permitAll();
-//    }
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/").permitAll() // 認証なしでアクセスできるパスの指定
+                .antMatchers("/admin/**").hasRole("ADMIN")     // adminの場合ロールがADMINの場合のみ許可する
+                // その他のリクエストは認証が必要
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
+                // ログインフォームのパス
                 .loginPage("/login")
                 .permitAll()
                 .and()
             .logout()
-                .permitAll();
+                // ログアウトがパス(GET)の場合設定する（CSRF対応）
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")  // ログアウト成功時の遷移先指定
+                .permitAll()
+                .deleteCookies("JSESSIONID") // ログアウト時にセッションIDをクッキーから削除する
+                .and()
+                .sessionManagement().invalidSessionUrl("/");  // 無効なセッションIDが指定された場合の遷移先を指定
+          ;
     }
 
+//    /**
+//     * ユーザー情報を設定
+//     * @param auth
+//     * @throws Exception
+//     */
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//        // DB使う場合
+//        auth
+//            .jdbcAuthentication()
+//                .dataSource(dataSource)
+//                .authoritiesByUsernameQuery("select user_id as username, role as authority from user_roles where user_id = ?")
+//                .usersByUsernameQuery("select user_id as username, password, enabled from user_info where user_id = ?")
+//        ;
+//
+////        auth
+////            .jdbcAuthentication()
+////                .dataSource(dataSource)
+////                .withDefaultSchema()
+////                .withUser("user").password("user").roles("USER").and()
+////                .withUser("admin").password("admin").roles("ADMIN");
+//
+//        // DB使わない場合
+////        auth
+////            .inMemoryAuthentication()
+////                .withUser("user").password("user").roles("USER")
+////                .and()
+////                .withUser("admin").password("admin").roles("ADMIN")
+////                ;
+//    }
+
+    /**
+     * 独自処理の呼び出し
+     *
+     * @param auth
+     * @throws Exception
+     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
-            .inMemoryAuthentication()
-                .withUser("user").password("password").roles("USER");
+            .userDetailsService(myUserDetailsService())
+//            .passwordEncoder(new StandardPasswordEncoder())
+            ;
+    }
+
+    @Bean
+    public UserDetailsService myUserDetailsService() {
+        return new MyUserDetailsService();
     }
 }

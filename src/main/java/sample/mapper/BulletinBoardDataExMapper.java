@@ -11,7 +11,7 @@ import sample.model.BulletinBoardData;
  * @author a-numadate
  *
  */
-public interface  BulletinBoardDataExMapper {
+public interface BulletinBoardDataExMapper {
 
     /**
      * idのMax値を取得して返却する
