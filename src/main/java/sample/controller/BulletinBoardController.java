@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import sample.exception.SystemErrorException;
 import sample.form.BulletinBoardForm;
 import sample.model.BulletinBoardData;
 import sample.service.BulletinBoardDataService;
@@ -65,6 +66,12 @@ public class BulletinBoardController {
     public String serchKeyword(BulletinBoardForm bulletinBoardForm, Locale locale, Model model) {
 
         List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName());
+
+        if(list.isEmpty()) {
+            //　該当ユーザーが存在しない場合のエラーを返却する
+
+        }
+
         model.addAttribute("bulletinBoardDataList", list);
         model.addAttribute("bulletinBoardForm", new BulletinBoardForm());
 
@@ -102,7 +109,7 @@ public class BulletinBoardController {
             bulletinBoardDataService.addBulletinBoardData(entity);
         } catch(Exception e) {
             log.info(e.getMessage());
-            e.printStackTrace();
+            throw new SystemErrorException();
         }
 
         getDataAll(model);
@@ -114,5 +121,4 @@ public class BulletinBoardController {
         List<BulletinBoardData> list = bulletinBoardDataService.getBulletinBoardDataAll();
         model.addAttribute("bulletinBoardDataList", list);
     }
-
 }
