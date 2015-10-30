@@ -16,7 +16,6 @@ spring:
   thymeleaf:
     cache: false
     encoding: UTF-8
-
 logging:
     file: app.log
     path: /var/log
