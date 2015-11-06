@@ -2,6 +2,8 @@ package sample.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import sample.model.BulletinBoardData;
 
 /**
@@ -27,5 +29,15 @@ public interface BulletinBoardDataExMapper {
      * @param name 名前
      * @return 該当データ(リスト)
      */
-    List<BulletinBoardData> selectByName(String name);
+    List<BulletinBoardData> selectByName(@Param("name") String name, @Param("startingPosition") int startingPosition, @Param("displayNum") int displayNum);
+
+    /**
+     * 指定したページのデータを取得する
+     *
+     * @param startingPosition 開始位置
+     * @param displayNum 1ページの表示件数
+     * @return 該当データ(リスト)
+     */
+    List<BulletinBoardData> getAssignPageData(@Param("startingPosition") int startingPosition, @Param("displayNum") int displayNum);
+
 }

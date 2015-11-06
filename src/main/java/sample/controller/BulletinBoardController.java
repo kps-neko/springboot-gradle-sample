@@ -17,9 +17,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import sample.exception.SystemErrorException;
 import sample.form.BulletinBoardForm;
+import sample.form.PageCondition;
 import sample.model.BulletinBoardData;
 import sample.service.BulletinBoardDataService;
 
@@ -49,10 +51,25 @@ public class BulletinBoardController {
      */
     @RequestMapping(value = "/serch/list", method = RequestMethod.GET)
     public String serchList(Locale locale, Model model) {
-        getDataAll(model);
+        getPageData(model);
         return "bulletinBoard";
     }
 
+    /**
+     * 指定したページのデータを取得する
+     *
+     *
+     */
+    @RequestMapping(value = "/serch/page", method = RequestMethod.GET)
+    public String getPageData(@RequestParam int page, Locale locale, Model model) {
+        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(page);
+
+        List<BulletinBoardData> list = bulletinBoardDataService.getAssignPageData(pageCondition);
+        model.addAttribute("bulletinBoardDataList", list);
+        model.addAttribute("pageCondition", pageCondition);
+
+        return "bulletinBoard";
+    }
 
     /**
      * パラメータで指定された名前のデータを検索する
@@ -64,8 +81,9 @@ public class BulletinBoardController {
      */
     @RequestMapping(value = "/serch", method = RequestMethod.POST)
     public String serchKeyword(BulletinBoardForm bulletinBoardForm, Locale locale, Model model) {
+        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(1);
 
-        List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName());
+        List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName(), pageCondition);
 
         if(list.isEmpty()) {
             //　該当ユーザーが存在しない場合のエラーを返却する
@@ -73,6 +91,7 @@ public class BulletinBoardController {
         }
 
         model.addAttribute("bulletinBoardDataList", list);
+        model.addAttribute("pageCondition", pageCondition);
         model.addAttribute("bulletinBoardForm", new BulletinBoardForm());
 
         return "bulletinBoard";
@@ -96,7 +115,7 @@ public class BulletinBoardController {
             for(FieldError err: result.getFieldErrors()) {
                 log.info("error code = [" + err.getCode() + "]");
             }
-            getDataAll(model);
+            getPageData(model);
             return "bulletinBoard";
         }
 
@@ -112,7 +131,7 @@ public class BulletinBoardController {
             throw new SystemErrorException();
         }
 
-        getDataAll(model);
+        getPageData(model);
         model.addAttribute("bulletinBoardForm", new BulletinBoardForm());
         return "bulletinBoard";
     }
@@ -120,5 +139,13 @@ public class BulletinBoardController {
     private void getDataAll(Model model) {
         List<BulletinBoardData> list = bulletinBoardDataService.getBulletinBoardDataAll();
         model.addAttribute("bulletinBoardDataList", list);
+    }
+
+    private void getPageData(Model model) {
+        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(1);
+
+        List<BulletinBoardData> list = bulletinBoardDataService.getAssignPageData(pageCondition);
+        model.addAttribute("bulletinBoardDataList", list);
+        model.addAttribute("pageCondition", pageCondition);
     }
 }

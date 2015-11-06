@@ -44,12 +44,59 @@
   </div>
 
   <HR/>
-  <table>
-    <tr th:each="list : ${bulletinBoardDataList}">
-        <td><span th:text="${list.name}"></span></td>
-        <td><span th:text="${list.postingDate}"></span></td>
-        <td><span th:text="${list.postingContent}"></span></td>
+
+  <table width="80%">
+    <tr>
+      <td><span th:text="${pageCondition.totalCount}"></span>件</td>
+      <td><span th:text="${pageCondition.startingPosition + 1}"></span>件～<span th:text="${pageCondition.endPosition}"></span>件を表示</td>
+      <td>
+        <div th:switch="${pageCondition.page}">
+          <span th:case="${1}" ><span>&lt;&nbsp;</span></span>
+          <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${pageCondition.page - 1})}"><span>&lt;&nbsp;</span></a></span>
+        </div>
+      </td>
+      <td>
+        <div th:switch="${pageCondition.page}">
+          <span th:case="${pageCondition.totalPage}" ><span>&nbsp;&gt;</span></span>
+          <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${pageCondition.page + 1})}"><span>&nbsp;&gt;</span></a></span>
+        </div>
+      </td>
     </tr>
   </table>
+  <table border="1" width="80%">
+    <tr>
+      <td>お名前</td>
+      <td>投稿日時</td>
+      <td>投稿内容</td>
+    </tr>
+    <tr th:each="list : ${bulletinBoardDataList}">
+        <td width="15%"><span th:text="${list.name}"></span></td>
+        <td width="25%"><span th:text="${list.postingDate}"></span></td>
+        <td width="40%"><span th:text="${list.postingContent}"></span></td>
+    </tr>
+  </table>
+
+  <div class="pagenation">
+    <ul>
+    <li class="first">
+      <div th:switch="${pageCondition.page}">
+        <span th:case="${1}" ><span>&lt;&lt;&nbsp;最初へ</span></span>
+        <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=1)}"><span>&lt;&lt;&nbsp;最初へ</span></a></span>
+      </div>
+    </li>
+    <li th:each="i : ${#numbers.sequence(1, pageCondition.totalPage)}">
+      <div th:switch="${i}">
+        <span th:case="${pageCondition.page}" th:text="${i}"></span>
+        <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${i})}"><span th:text="${i}"></span></a></span>
+      </div>
+    </li>
+    <li class="end">
+      <div th:switch="${pageCondition.page}">
+        <span th:case="${pageCondition.totalPage}" ><span>最後へ&nbsp;&gt;&gt;</span></span>
+        <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${pageCondition.totalPage})}"><span>最後へ&nbsp;&gt;&gt;</span></a></span>
+      </div>
+    </li>
+    </ul>
+  </div>
 </body>
 </html>

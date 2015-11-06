@@ -1,7 +1,5 @@
 package sample;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +16,8 @@ import sample.security.MyUserDetailsService;
 @Configuration
 @EnableWebMvcSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private DataSource dataSource;
+//    @Autowired
+//    private DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -89,9 +87,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
+            // ユーザー認証処理
             .userDetailsService(myUserDetailsService())
-//            .passwordEncoder(new StandardPasswordEncoder())
-            .passwordEncoder(new ShaPasswordEncoder(256));
+            // パスワード認証処理
+            .passwordEncoder(new ShaPasswordEncoder(256))
             ;
     }
 

@@ -5,7 +5,7 @@ spring:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost/postgres
     username: postgres
-    password: Keyport01
+    password: hmj
     #　コネクションプール設定(default)
     max-active: 100
     max-idle: 8
