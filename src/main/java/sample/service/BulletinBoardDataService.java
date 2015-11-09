@@ -1,5 +1,6 @@
 package sample.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,9 +81,16 @@ public class BulletinBoardDataService {
      *
      */
     public PageCondition getPageCondition(int page) {
-        // システム設定値から表示件数取得
+        // システム設定値から画面表示件数取得
         SystemProperty systemProperty = getSystemProperty("DISPLAY_NUMBER");
         int limitCount = systemProperty != null ? Integer.parseInt(systemProperty.getValue()) : 0;
+        // システム設定値からページ表示件数取得
+        systemProperty = getSystemProperty("DISPLAY_PAGE_NUMBER");
+        int displayPage = systemProperty != null ? Integer.parseInt(systemProperty.getValue()) : 0;
+        // システム設定値からページング時の遷移先URL取得
+        systemProperty = getSystemProperty("PAGING_TRANSITION_URL");
+        String pageURL = systemProperty != null ? systemProperty.getValue() : null;
+
         // 総件数取得
         int totalCount = getBulletinBoardDataAll().size();
         // 開始位置の算出
@@ -92,6 +100,7 @@ public class BulletinBoardDataService {
         // ページ数の算出
         int totalPage = (totalCount + limitCount) / limitCount;
 
+        // ページ情報設定
         PageCondition pageCondition = new PageCondition();
         pageCondition.setTotalCount(totalCount);
         pageCondition.setLimitCount(limitCount);
@@ -100,6 +109,24 @@ public class BulletinBoardDataService {
         pageCondition.setEndPosition(endPosition);
         pageCondition.setTotalCount(totalCount);
         pageCondition.setTotalPage(totalPage);
+        pageCondition.setDisplayPage(displayPage);
+        pageCondition.setPageURL(pageURL);
+
+        if (page > displayPage / 2) {
+            // 最初に表示するページ番号を算出
+            int startPageNumber = page - displayPage / 2 + 1;
+            // ページの表示数をページ表示件数分必ず表示させるために最初に表示するページ数を調整
+            if (totalPage < startPageNumber + displayPage) {
+                startPageNumber = totalPage - displayPage + 1;
+            }
+
+            // 表示するページ番号のリストを作成
+            List<Integer> pageNumberList = new ArrayList<Integer>();
+            for (int i = startPageNumber; i < startPageNumber + displayPage; i++) {
+                pageNumberList.add(i);
+            }
+            pageCondition.setPageNumberList(pageNumberList);
+        }
 
         return pageCondition;
     }
