@@ -62,7 +62,7 @@ public class BulletinBoardController {
      */
     @RequestMapping(value = "/serch/page", method = RequestMethod.GET)
     public String getPageData(@RequestParam int page, Locale locale, Model model) {
-        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(page);
+        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(page, null);
 
         List<BulletinBoardData> list = bulletinBoardDataService.getAssignPageData(pageCondition);
         model.addAttribute("bulletinBoardDataList", list);
@@ -81,14 +81,12 @@ public class BulletinBoardController {
      */
     @RequestMapping(value = "/serch", method = RequestMethod.POST)
     public String serchKeyword(BulletinBoardForm bulletinBoardForm, Locale locale, Model model) {
-        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(1);
+        // 新規に検索するためページ数は1固定
+        List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName(), 1);
 
-        List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName(), pageCondition);
-
-        if(list.isEmpty()) {
-            //　該当ユーザーが存在しない場合のエラーを返却する
-
-        }
+        // ページ情報取得
+        PageCondition pageCondition =
+                bulletinBoardDataService.getPageCondition(1, bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName()).size());
 
         model.addAttribute("bulletinBoardDataList", list);
         model.addAttribute("pageCondition", pageCondition);
@@ -142,7 +140,7 @@ public class BulletinBoardController {
     }
 
     private void getPageData(Model model) {
-        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(1);
+        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(1, null);
 
         List<BulletinBoardData> list = bulletinBoardDataService.getAssignPageData(pageCondition);
         model.addAttribute("bulletinBoardDataList", list);

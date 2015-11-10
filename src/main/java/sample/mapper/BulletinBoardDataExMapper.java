@@ -24,12 +24,20 @@ public interface BulletinBoardDataExMapper {
     Integer selectByIdMax();
 
     /**
-     * 指定した名前に該当するデータを検索する
+     * 指定した名前に該当するデータを検索する（全件取得）
      *
      * @param name 名前
      * @return 該当データ(リスト)
      */
-    List<BulletinBoardData> selectByName(@Param("name") String name, @Param("startingPosition") int startingPosition, @Param("displayNum") int displayNum);
+    List<BulletinBoardData> selectByName(@Param("name") String name);
+
+    /**
+     * 指定した名前に該当するデータを検索する（指定範囲のデータ）
+     *
+     * @param name 名前
+     * @return 該当データ(リスト)
+     */
+    List<BulletinBoardData> selectByNamePage(@Param("name") String name, @Param("startingPosition") int startingPosition, @Param("displayNum") int displayNum);
 
     /**
      * 指定したページのデータを取得する
