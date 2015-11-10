@@ -101,7 +101,7 @@ public class BulletinBoardDataService {
         int totalPage = (totalCount + limitCount) / limitCount;
 
         // ページ情報設定
-        PageCondition pageCondition = new PageCondition();
+        PageCondition pageCondition = new PageCondition(displayPage);
         pageCondition.setTotalCount(totalCount);
         pageCondition.setLimitCount(limitCount);
         pageCondition.setPage(page);
