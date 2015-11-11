@@ -11,10 +11,21 @@ public class BulletinBoardForm {
     @NotEmpty
     @Length(max=400)
     private String postingContent;
+    // 検索キーワード
+    private String serchKeyword;
 
     // コンストラクタ
     public BulletinBoardForm() {
         super();
+    }
+
+    /**
+     * 入力情報を初期化する
+     *
+     */
+    public void initInputData() {
+        this.name = null;
+        this.postingContent = null;
     }
 
     // setter & getter ---------------------
@@ -53,5 +64,23 @@ public class BulletinBoardForm {
      */
     public void setPostingContent(String postingContent) {
         this.postingContent = postingContent;
+    }
+
+    /**
+     * serchKeywordを返却
+     *
+     * @return serchKeyword
+     */
+    public String getSerchKeyword() {
+        return serchKeyword;
+    }
+
+    /**
+     * serchKeywordを設定
+     *
+     * @param serchKeyword
+     */
+    public void setSerchKeyword(String serchKeyword) {
+        this.serchKeyword = serchKeyword;
     }
 }

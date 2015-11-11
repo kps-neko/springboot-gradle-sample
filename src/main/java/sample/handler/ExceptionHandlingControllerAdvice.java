@@ -30,6 +30,7 @@ public class ExceptionHandlingControllerAdvice {
     @ResponseStatus(value=HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessErrorException.class)
     public String businessError(Exception exception){
+        exception.printStackTrace();
         logger.error("Request raised " + exception.getClass().getSimpleName());
         return "businessError";
     }
@@ -41,6 +42,7 @@ public class ExceptionHandlingControllerAdvice {
     @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(SystemErrorException.class)
     public String systemError(Exception exception) {
+        exception.printStackTrace();
         logger.error("Request raised " + exception.getClass().getSimpleName());
         return "error";
     }
@@ -52,6 +54,7 @@ public class ExceptionHandlingControllerAdvice {
     @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeErrorException.class)
     public String databaseError(Exception exception) {
+        exception.printStackTrace();
         logger.error("Request raised " + exception.getClass().getSimpleName());
         return "error";
     }

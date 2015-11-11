@@ -86,13 +86,19 @@
         <li th:each="i : ${pageCondition.pageNumberList}">
             <div th:switch="${i}">
                 <span th:case="${pageCondition.page}" th:text="${i}"></span>
-                <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${i})}"><span th:text="${i}"></span></a></span>
+                <span th:case="*">
+                    <a th:href="${bulletinBoardForm.serchKeyword == null}? @{${pageCondition.pageURL}(page=${i})} : @{${pageCondition.pageURL}(page=${i}, serchKeyword=${bulletinBoardForm.serchKeyword})}"><span th:text="${i}"></span></a>
+                    <!-- <a th:href="@{${pageCondition.pageURL}(page=${i})}"><span th:text="${i}"></span></a> -->
+                </span>
             </div>
         </li>
         <li class="end">
             <div th:switch="${pageCondition.page}">
                 <span th:case="${pageCondition.totalPage}" ><span>最後へ&nbsp;&gt;&gt;</span></span>
-                <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${pageCondition.totalPage})}"><span>最後へ&nbsp;&gt;&gt;</span></a></span>
+                <span th:case="*">
+                    <a th:href="${bulletinBoardForm.serchKeyword == null}? @{${pageCondition.pageURL}(page=${pageCondition.totalPage})} : @{${pageCondition.pageURL}(page=${pageCondition.totalPage}, serchKeyword=${bulletinBoardForm.serchKeyword})}"><span>最後へ&nbsp;&gt;&gt;</span></a>
+                    <!-- <a th:href="@{${pageCondition.pageURL}(page=${pageCondition.totalPage})}"><span>最後へ&nbsp;&gt;&gt;</span></a> -->
+                </span>
             </div>
         </li>
     </ul>

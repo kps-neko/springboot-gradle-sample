@@ -58,16 +58,39 @@ public class BulletinBoardController {
     /**
      * 指定したページのデータを取得する
      *
-     *
+     * @param page
+     * @param serchKeyword
+     * @param locale
+     * @param model
+     * @return
      */
     @RequestMapping(value = "/serch/page", method = RequestMethod.GET)
-    public String getPageData(@RequestParam int page, Locale locale, Model model) {
-        PageCondition pageCondition = bulletinBoardDataService.getPageCondition(page, null);
+    public String getPageData(@RequestParam int page, @RequestParam(defaultValue="") String serchKeyword, Locale locale, Model model) {
+        if ("".equals(serchKeyword)) {
+            // パラメータが存在しない場合
+            PageCondition pageCondition = bulletinBoardDataService.getPageCondition(page, null);
 
-        List<BulletinBoardData> list = bulletinBoardDataService.getAssignPageData(pageCondition);
-        model.addAttribute("bulletinBoardDataList", list);
-        model.addAttribute("pageCondition", pageCondition);
+            List<BulletinBoardData> list = bulletinBoardDataService.getAssignPageData(pageCondition);
+            model.addAttribute("bulletinBoardDataList", list);
+            model.addAttribute("pageCondition", pageCondition);
+        } else {
+            // パラメータで指定された検索キーワードのデータで検索を行いその結果をモデルに設定する
+            getSerchKeywordSelectData(model, serchKeyword, page);
+        }
 
+        return "bulletinBoard";
+    }
+
+    /**
+     * 検索条件をクリアして全件を表示する
+     *
+     * @param locale
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/serch/page/serch/clear", method = RequestMethod.GET)
+    public String clearSearchConditions(Locale locale, Model model) {
+        getPageData(model);
         return "bulletinBoard";
     }
 
@@ -81,16 +104,15 @@ public class BulletinBoardController {
      */
     @RequestMapping(value = "/serch", method = RequestMethod.POST)
     public String serchKeyword(BulletinBoardForm bulletinBoardForm, Locale locale, Model model) {
-        // 新規に検索するためページ数は1固定
-        List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName(), 1);
 
-        // ページ情報取得
-        PageCondition pageCondition =
-                bulletinBoardDataService.getPageCondition(1, bulletinBoardDataService.getSearchNameBulletinBoardData(bulletinBoardForm.getName()).size());
+        // パラメータで指定された名前のデータを検索を行いその結果をモデルに設定する(新規に検索するためページ数は1固定)
+        getSerchKeywordSelectData(model, bulletinBoardForm.getName(), 1);
 
-        model.addAttribute("bulletinBoardDataList", list);
-        model.addAttribute("pageCondition", pageCondition);
-        model.addAttribute("bulletinBoardForm", new BulletinBoardForm());
+        // 入力された検索情報を設定
+        bulletinBoardForm.setSerchKeyword(bulletinBoardForm.getName());
+        // フォームの入力データを初期化する
+        bulletinBoardForm.initInputData();
+        model.addAttribute("bulletinBoardForm", bulletinBoardForm);
 
         return "bulletinBoard";
     }
@@ -128,17 +150,35 @@ public class BulletinBoardController {
             log.info(e.getMessage());
             throw new SystemErrorException();
         }
-
+        // フォームの入力データを初期化する
+        bulletinBoardForm.initInputData();
         getPageData(model);
-        model.addAttribute("bulletinBoardForm", new BulletinBoardForm());
+        model.addAttribute("bulletinBoardForm", bulletinBoardForm);
         return "bulletinBoard";
     }
 
-    private void getDataAll(Model model) {
-        List<BulletinBoardData> list = bulletinBoardDataService.getBulletinBoardDataAll();
+    /**
+     * 検索条件が存在する場合
+     *
+     * @param model
+     * @param keyword
+     */
+    private void getSerchKeywordSelectData(Model model, String keyword, int page) {
+        List<BulletinBoardData> list = bulletinBoardDataService.getSearchNameBulletinBoardData(keyword, page);
+
+        // ページ情報取得
+        PageCondition pageCondition =
+                bulletinBoardDataService.getPageCondition(page, bulletinBoardDataService.getSearchNameBulletinBoardData(keyword).size());
+
         model.addAttribute("bulletinBoardDataList", list);
+        model.addAttribute("pageCondition", pageCondition);
     }
 
+    /**
+     * ページ情報初期表示
+     *
+     * @param model
+     */
     private void getPageData(Model model) {
         PageCondition pageCondition = bulletinBoardDataService.getPageCondition(1, null);
 
