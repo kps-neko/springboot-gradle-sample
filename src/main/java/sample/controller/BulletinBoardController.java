@@ -58,8 +58,8 @@ public class BulletinBoardController {
     /**
      * 指定したページのデータを取得する
      *
-     * @param page
-     * @param serchKeyword
+     * @param page ページ番号（省略不可）
+     * @param serchKeyword 検索条件（省略可　省略時：空文字が設定される）
      * @param locale
      * @param model
      * @return
