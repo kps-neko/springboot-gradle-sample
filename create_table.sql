@@ -35,7 +35,9 @@ create table system_property (
 -- ************************************
 -- データ作成
 -- ************************************
+-- password:user　※passwordにはsha256で「user」を暗号化したものを設定
 INSERT INTO user_info (user_id, password, organization_name, enabled) VALUES('user', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', '一般', true);
+-- password:admin　※passwordにはsha256で「admin」を暗号化したものを設定
 INSERT INTO user_info (user_id, password, organization_name, enabled) VALUES('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', '管理者', true);
 
 INSERT INTO user_roles (user_id, role) VALUES('user', 'ROLE_USER');
