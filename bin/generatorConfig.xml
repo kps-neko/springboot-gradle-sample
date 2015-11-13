@@ -5,7 +5,7 @@
 
 <generatorConfiguration>
  <!-- クラスパスの追加(JDBCのパス追加) -->
- <classPathEntry location="C:\sts-bundle\postgresql-9.4-1204.jdbc4.jar" />
+ <classPathEntry location="C:\Users\USER0200\.gradle\caches\modules-2\files-2.1\org.postgresql\postgresql\9.4-1204-jdbc4\163c9991ca0adf37c59d93c923129e4cc629a6e0\postgresql-9.4-1204-jdbc4.jar" />
 
  <context id="posgreTable" targetRuntime="MyBatis3">
    <!-- DBの接続情報を設定 -->
