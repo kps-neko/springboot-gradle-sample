@@ -59,6 +59,11 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
 
+// mybatisタスクの設定を追加。
+configurations {
+    myBatisGenerator
+}
+
 // 依存関係設定
 dependencies {
   // loggers
@@ -88,11 +93,24 @@ dependencies {
   // MyBatis
   compile "org.mybatis:mybatis:$myBatisVersion"
   compile "org.mybatis:mybatis-spring:$mybatisSpringVersion"
-  compile "org.mybatis.generator:mybatis-generator-core:$mybatisGeneratorVersion"
+  // compile "org.mybatis.generator:mybatis-generator-core:$mybatisGeneratorVersion"
 
   // spring-security
   compile "org.springframework.security:spring-security-web:$springSecurityVersion"
   compile "org.springframework.security:spring-security-config:$springSecurityVersion"
 
+  // mybatisタスクの設定に依存ライブラリを追加する。
+  myBatisGenerator "org.mybatis.generator:mybatis-generator-core:$mybatisGeneratorVersion"
+  myBatisGenerator "org.postgresql:postgresql:$postgresqlVersion"
+
   testCompile "junit:junit"
+}
+
+// mybatisタスクはMyBatisGeneratorを実行する。
+task mybatis << {
+    ant.taskdef(
+            name: 'genfiles',
+            classname: 'org.mybatis.generator.ant.GeneratorAntTask',
+            classpath: configurations.myBatisGenerator.asPath)
+    ant.genfiles(overwrite: 'true', configfile : "$projectDir/src/main/resources/generatorConfig.xml" , verbose: 'false')
 }
