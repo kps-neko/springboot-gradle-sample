@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>一般ユーザー</title>
@@ -11,6 +11,8 @@
     <p>このページは一般ユーザー用です。</p>
     <a th:href="@{/}">トップページ</a>
     <a th:href="@{/bulletinBoard/serch/page(page=1)}">掲示板</a>
+    <div sec:authorize="hasRole('ROLE_ADMIN')">This is Admin</div>
+    <div sec:authorize="hasRole('ROLE_USER')">This is User</div>
     <table border="1">
         <tr>
             <th>ユーザー名</th>
