@@ -5,6 +5,7 @@
 /.settings/
 /.project
 /.classpath
+/.springBeans
 /*.iml
 /*.ipr
 /*.iws
