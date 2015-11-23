@@ -35,14 +35,15 @@ public class BulletinBoardController {
     @Autowired
     BulletinBoardDataService bulletinBoardDataService;
 
-    @ModelAttribute // 画面で使うフォームに対応したオブジェクトを初期化して、Modelに追加する(Thymeleafからアクセスさせるために必要)
+    @ModelAttribute
+        // 画面で使うフォームに対応したオブジェクトを初期化して、Modelに追加する(Thymeleafからアクセスさせるために必要)
     BulletinBoardForm setupForm() {
         return new BulletinBoardForm();
     }
 
     /**
      * 全件取得
-     *
+     * <p>
      * DBから全データを取得します
      *
      * @param locale
@@ -58,14 +59,14 @@ public class BulletinBoardController {
     /**
      * 指定したページのデータを取得する
      *
-     * @param page ページ番号（省略不可）
+     * @param page         ページ番号（省略不可）
      * @param serchKeyword 検索条件（省略可　省略時：空文字が設定される）
      * @param locale
      * @param model
      * @return
      */
     @RequestMapping(value = "/serch/page", method = RequestMethod.GET)
-    public String getPageData(@RequestParam int page, @RequestParam(defaultValue="") String serchKeyword, Locale locale, Model model) {
+    public String getPageData(@RequestParam int page, @RequestParam(defaultValue = "") String serchKeyword, Locale locale, Model model) {
         if ("".equals(serchKeyword)) {
             // パラメータが存在しない場合
             PageCondition pageCondition = bulletinBoardDataService.getPageCondition(page, null);
@@ -119,20 +120,20 @@ public class BulletinBoardController {
 
     /**
      * 画面で入力されたデータをDBに登録して今回登録したデータを含めて全データを画面に返却する
-     *
+     * <p>
      * ※トランザクションの範囲について確認しておく
      *
      * @param bulletinBoardForm フォームデータ
-     * @param locale
+     * @param result
      * @param model
-     * @return
+     * @return String
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String registReport(@Valid BulletinBoardForm bulletinBoardForm, BindingResult result, Model model) {
 
         // バリデータ
         if (result.hasErrors()) {
-            for(FieldError err: result.getFieldErrors()) {
+            for (FieldError err : result.getFieldErrors()) {
                 log.info("error code = [" + err.getCode() + "]");
             }
             getPageData(model);
@@ -146,7 +147,7 @@ public class BulletinBoardController {
             entity.setPostingDate(new Timestamp(System.currentTimeMillis()));
             entity.setRegisterDate(new Timestamp(System.currentTimeMillis()));
             bulletinBoardDataService.addBulletinBoardData(entity);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info(e.getMessage());
             throw new SystemErrorException();
         }

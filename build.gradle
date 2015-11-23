@@ -1,4 +1,5 @@
 buildscript {
+    apply from: "conf.gradle"
     repositories {
         mavenCentral()
         maven {
@@ -6,17 +7,28 @@ buildscript {
         }
     }
     dependencies {
-        // SpringBootのバージョンはプラグインだけで設定されなければならない。
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.3.0.RELEASE"
-        classpath "org.flywaydb:flyway-gradle-plugin:3.2.1"
+        // gradleプラグインの依存関係およびライブラリの読み込み。
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        // springbootはflywayを統合できるが、MyBatisGeneratorと合わせて使うのには都合が悪いので
+        // 統合せずにgradleプラグインを利用する。
+        classpath 'org.flywaydb:flyway-gradle-plugin:3.2.1'
+        classpath "${dbSetting.driverArtifactId}:${dbSetting.driverVersion}"
     }
 }
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
-apply plugin: "org.flywaydb.flyway"
+apply plugin: 'org.flywaydb.flyway'
+
+/*
+// SpringBoot以外のBOMを利用する場合、下記のように依存BOMを追加する。
+dependencyManagement {
+    imports {
+        mavenBom 'io.spring.platform:platform-bom:2.0.0.RELEASE'
+    }
+}
+*/
 
 jar {
     baseName = 'springboot-gradle-sample'
@@ -26,46 +38,14 @@ jar {
     //from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
-repositories {
-    mavenCentral()
+flyway {
+    url = dbSetting.connectionUrl
+    user = dbSetting.userId
+    password = dbSetting.password
 }
 
-// 拡張プロパティ
-ext {
-    // loggers
-    slf4jVersion = "1.7.9"
-    logbackVersion = "1.1.2"
-
-    // JDBC Driver設定
-    dbSetting = [
-            driverGroup  : "org.postgresql:postgresql",
-            driverVersion: "9.4-1205-jdbc4",
-            driverClass  : "org.postgresql.Driver",
-            connectionUrl: "jdbc:postgresql://localhost/postgres",
-            userId       : "postgres",
-            password     : "hmj",
-    ]
-
-    // MyBatis
-    myBatisVersion = "3.3.0"
-    myBatisSpringVersion = "1.2.3"
-
-    // springSecurity
-    springSecurityVersion = "3.2.6.RELEASE"
-
-    // MyBatisGeneratorの設定。各項目とも必須です。
-    myBatisGeneratorConfig = [
-            // ジェネレータバージョン。
-            generatorVersion : "1.3.2",
-            // スキーマ名の設定
-            schema           : "public",
-            // 自動生成ファイルの出力パッケージのベースになる。アプリケーションの最下層のパッケージで良い。
-            basePackage      : "sample",
-            // DBのスキーマ名でパッケージを切るかどうか。
-            enableSubPackages: "false",
-            // mapperのタイプはANNOTATEDMAPPER,XMLMAPPER,MIXEDMAPPERから選択
-            mapperType       : "XMLMAPPER",
-    ]
+repositories {
+    mavenCentral()
 }
 
 // Java Use Version
@@ -76,50 +56,59 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
 
-// mybatisタスクの設定を追加。
 configurations {
+    // mybatisタスクの設定。
     genMyBatis
+    // jdbcの依存解決に使用する。
+    jdbcResolve
+    if (useLogger != loggers.logback) {
+        compile.exclude module: 'spring-boot-starter-logging'
+    }
 }
 
 // 依存関係設定
 dependencies {
-    // loggers
-    compile "org.slf4j:slf4j-api:$slf4jVersion"
-    compile "org.slf4j:jul-to-slf4j:$slf4jVersion"
-    compile "ch.qos.logback:logback-classic:$logbackVersion"
-
-    // spring-bootはバージョン指定しない。プラグインの設定で一元管理されてる。
+    // バージョン指定しないライブラリ（SpringBootでVersion管理を行う）
+    // spring-boot
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-test"
     compile "org.springframework.boot:spring-boot-starter-security"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "org.springframework.boot:spring-boot-starter-jdbc"
+    compile 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4'
+    compile useLogger
 
-    // ロールによって表示項目の制御するために必要
-    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:2.1.2.RELEASE'
+    // JDBC Driver
+    try {
+        jdbcResolve "${dbSetting.driverArtifactId}"
+        configurations.jdbcResolve.getResolvedConfiguration().getResolvedArtifacts()
+        compile "${dbSetting.driverArtifactId}"
+        logger.warn("JDBC driver dependency is resolved by BOM")
+    } catch (e) {
+        // BOMで解決出来なかった場合はバージョン指定を行う。
+        compile "${dbSetting.driverArtifactId}:${dbSetting.driverVersion}"
+        logger.warn("JDBC driver dependency is resolved by setting")
+    }
 
-    // JDBC Driverの依存
-    compile "${dbSetting.driverGroup}:${dbSetting.driverVersion}"
+    // log4j2でyml設定ファイルを使いたい場合は必要。
+    if (useLogger == loggers.log4j2) {
+        compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+    }
 
     // MyBatis
     compile "org.mybatis:mybatis:$myBatisVersion"
     compile "org.mybatis:mybatis-spring:$myBatisSpringVersion"
 
     // genMyBatisタスクの依存ライブラリ。
-    genMyBatis "org.mybatis.generator:mybatis-generator-core:$myBatisGeneratorConfig.generatorVersion"
-    genMyBatis "${dbSetting.driverGroup}:${dbSetting.driverVersion}"
+    genMyBatis "org.mybatis.generator:mybatis-generator-core:${myBatisGeneratorConfig.generatorVersion}"
+    genMyBatis "${dbSetting.driverArtifactId}:${dbSetting.driverVersion}"
 
     testCompile "junit:junit"
 }
 
-flyway {
-    url = dbSetting.connectionURL
-    user = dbSetting.userId
-    password = dbSetting.password
-}
-
-// genMyBatisはMyBatisのジェネレータを。
+// genMyBatisはMyBatisのジェネレータを実行する。
 task genMyBatis << {
     myBatisGeneratorConfig.each { key, val ->
         ant.properties["conf.$key"] = val
@@ -140,3 +129,21 @@ task genMyBatis << {
         }
     }
 }
+
+// flywayMigrateのdependsOnの、testClassesがメインのアプリをコンパイルしてしまうのでスキップする。
+// ソースにエラーがあってもマイグレーションやジェネレータが動作しないのはマズいので。
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(flywayMigrate)) {
+        compileJava.enabled = false
+        // flywayMigrateのdependsOnで、これだけ必要。
+//        processResources.enabled = false
+        classes.enabled = false
+        compileTestJava.enabled = false
+        processTestResources.enabled = false
+        testClasses.enabled = false
+    }
+}
+// マイグレーション後はMyBatisのジェネレータを必ず実行。
+flywayMigrate.finalizedBy genMyBatis
+
+

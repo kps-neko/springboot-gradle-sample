@@ -7,7 +7,7 @@
  <context id="dbtable" targetRuntime="MyBatis3">
    <!-- DBの接続情報を設定 -->
    <jdbcConnection driverClass="${conf.driverClass}"
-       connectionURL="${conf.connectionURL}"
+       connectionURL="${conf.connectionUrl}"
        userId="${conf.userId}"
        password="${conf.password}">
    </jdbcConnection>
